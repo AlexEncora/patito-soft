@@ -1,11 +1,15 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
+import com.patitosoft.encora.patitosoftapp.resource.PositionResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.List;
 
 @Setter
@@ -22,4 +26,21 @@ public class Position {
 
     @OneToMany(mappedBy = "position")
     private List<EmployeePosition> employeePositions;
+
+    public Position(PositionBuilder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+    }
+
+    public static class PositionBuilder {
+        private final String id;
+        private final String name;
+        private List<EmployeePosition> employeePositions;
+
+        public PositionBuilder(PositionResource resource) {
+            this.id = resource.getId();
+            this.name = resource.getName();
+        }
+
+    }
 }

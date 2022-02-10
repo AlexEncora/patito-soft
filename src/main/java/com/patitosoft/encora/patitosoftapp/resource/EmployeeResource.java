@@ -2,7 +2,6 @@ package com.patitosoft.encora.patitosoftapp.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.patitosoft.encora.patitosoftapp.domain.Employee;
-import com.patitosoft.encora.patitosoftapp.domain.EmployeePosition;
 import com.patitosoft.encora.patitosoftapp.domain.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,9 +29,9 @@ public class EmployeeResource {
     private String streetAddress;
     private LocalDate birthday;
     private Boolean isExEmployee;
-    private List<EmployeePosition> employeePositions;
+    private List<EmployeePositionResource> employeePositions;
 
-    public EmployeeResource(EmployeeResourceBuilder builder){
+    public EmployeeResource(EmployeeResourceBuilder builder) {
         this.id = builder.id;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
@@ -47,7 +46,7 @@ public class EmployeeResource {
         this.birthday = builder.birthday;
     }
 
-    public static class EmployeeResourceBuilder{
+    public static class EmployeeResourceBuilder {
         private final String id;
         private final String firstName;
         private final String lastName;
@@ -60,9 +59,9 @@ public class EmployeeResource {
         private final Integer zipCode;
         private final String streetAddress;
         private final LocalDate birthday;
-        private List<EmployeePosition> employeePositions;
+        private List<EmployeePositionResource> employeePositions;
 
-        public EmployeeResourceBuilder(Employee entity){
+        public EmployeeResourceBuilder(Employee entity) {
             this.id = entity.getId();
             this.firstName = entity.getFirstName();
             this.lastName = entity.getLastName();

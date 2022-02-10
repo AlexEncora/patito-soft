@@ -1,5 +1,6 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
+import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,29 @@ public class EmployeePosition {
     private Position position;
 
     @PrePersist
-    public void prePersist(){
+    public void prePersist() {
         this.currentPosition = true;
     }
+
+    public EmployeePosition(EmployeePositionBuilder builder) {
+        this.id = builder.id;
+        this.salary = builder.salary;
+        this.currentPosition = builder.currentPosition;
+    }
+
+    public static class EmployeePositionBuilder {
+        private final String id;
+        private final String salary;
+        private final Boolean currentPosition;
+        private Employee employee;
+        private Position position;
+
+        public EmployeePositionBuilder(EmployeePositionResource resource) {
+            this.id = resource.getId();
+            this.salary = resource.getSalary();
+            this.currentPosition = resource.getCurrentPosition();
+        }
+
+    }
+
 }
