@@ -21,6 +21,7 @@ public class PositionResource {
     public PositionResource(PositionResourceBuilder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.employeePositions = builder.employeePositions;
     }
 
     public static class PositionResourceBuilder {
@@ -33,5 +34,8 @@ public class PositionResource {
             this.name = entity.getName();
         }
 
+        public PositionResource build(){
+            return new PositionResource(this);
+        }
     }
 }

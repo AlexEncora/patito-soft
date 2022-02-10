@@ -44,6 +44,7 @@ public class EmployeeResource {
         this.zipCode = builder.zipCode;
         this.streetAddress = builder.streetAddress;
         this.birthday = builder.birthday;
+        this.employeePositions = builder.employeePositions;
     }
 
     public static class EmployeeResourceBuilder {
@@ -74,6 +75,10 @@ public class EmployeeResource {
             this.zipCode = entity.getZipCode();
             this.streetAddress = entity.getStreetAddress();
             this.birthday = entity.getBirthday();
+        }
+
+        public EmployeeResource build(){
+            return new EmployeeResource(this);
         }
     }
 }

@@ -36,6 +36,8 @@ public class EmployeePosition {
         this.id = builder.id;
         this.salary = builder.salary;
         this.currentPosition = builder.currentPosition;
+        this.employee = builder.employee;
+        this.position = builder.position;
     }
 
     public static class EmployeePositionBuilder {
@@ -51,6 +53,9 @@ public class EmployeePosition {
             this.currentPosition = resource.getCurrentPosition();
         }
 
+        public EmployeePosition build(){
+            return new EmployeePosition(this);
+        }
     }
 
 }

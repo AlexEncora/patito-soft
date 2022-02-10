@@ -30,6 +30,7 @@ public class Position {
     public Position(PositionBuilder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.employeePositions = builder.employeePositions;
     }
 
     public static class PositionBuilder {
@@ -42,5 +43,8 @@ public class Position {
             this.name = resource.getName();
         }
 
+        public Position build() {
+            return new Position(this);
+        }
     }
 }
