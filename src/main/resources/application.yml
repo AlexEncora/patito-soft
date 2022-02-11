@@ -1,12 +1,22 @@
 spring:
-    jpa:
-      database: POSTGRESQL
-      show-sql: true
-      hibernate:
-        ddl-auto: update
-    datasource:
-      platform: postgres
-      url: jdbc:postgresql://localhost:5432/patitodb
-      username: patitoadm
-      password: patitoadm
-      driverClassName: org.postgresql.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  application:
+    name: "patitosoft"
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/patitodb
+    username: patitoadm
+    password: patitoadm
+    driverClassName: org.postgresql.Driver
+#---
+#spring:
+#  profiles: dev
+#server:
+#  port: 9000
