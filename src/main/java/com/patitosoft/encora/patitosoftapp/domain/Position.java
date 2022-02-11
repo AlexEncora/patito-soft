@@ -1,5 +1,6 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
+import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
 import com.patitosoft.encora.patitosoftapp.resource.PositionResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -41,6 +43,13 @@ public class Position {
         public PositionBuilder(PositionResource resource) {
             this.id = resource.getId();
             this.name = resource.getName();
+        }
+
+        public PositionBuilder employeePositions(List<EmployeePositionResource> employeePositionResources){
+            this.employeePositions = employeePositionResources.stream().map(
+                    employeePositionResource -> new EmployeePosition.EmployeePositionBuilder(employeePositionResource)
+                            .build()).collect(Collectors.toList());
+            return this;
         }
 
         public Position build() {

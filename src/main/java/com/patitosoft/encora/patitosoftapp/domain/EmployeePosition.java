@@ -1,6 +1,8 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
 import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
+import com.patitosoft.encora.patitosoftapp.resource.EmployeeResource;
+import com.patitosoft.encora.patitosoftapp.resource.PositionResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,7 +55,17 @@ public class EmployeePosition {
             this.currentPosition = resource.getCurrentPosition();
         }
 
-        public EmployeePosition build(){
+        public EmployeePositionBuilder employee(EmployeeResource employeeResource) {
+            this.employee = new Employee.EmployeeBuilder(employeeResource).build();
+            return this;
+        }
+
+        public EmployeePositionBuilder position(PositionResource positionResource) {
+            this.position = new Position.PositionBuilder(positionResource).build();
+            return this;
+        }
+
+        public EmployeePosition build() {
             return new EmployeePosition(this);
         }
     }

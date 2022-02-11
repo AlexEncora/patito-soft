@@ -2,6 +2,7 @@ package com.patitosoft.encora.patitosoftapp.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.patitosoft.encora.patitosoftapp.domain.Employee;
+import com.patitosoft.encora.patitosoftapp.domain.EmployeePosition;
 import com.patitosoft.encora.patitosoftapp.domain.Gender;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -77,7 +79,15 @@ public class EmployeeResource {
             this.birthday = entity.getBirthday();
         }
 
-        public EmployeeResource build(){
+        public EmployeeResourceBuilder employeePositions(List<EmployeePosition> employeePosition) {
+            this.employeePositions = employeePosition.stream().map(
+                            employeePositionResource -> new EmployeePositionResource.
+                                    EmployeePositionResourceBuilder(employeePositionResource).build())
+                    .collect(Collectors.toList());
+            return this;
+        }
+
+        public EmployeeResource build() {
             return new EmployeeResource(this);
         }
     }

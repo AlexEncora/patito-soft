@@ -1,7 +1,9 @@
 package com.patitosoft.encora.patitosoftapp.resource;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.patitosoft.encora.patitosoftapp.domain.Employee;
 import com.patitosoft.encora.patitosoftapp.domain.EmployeePosition;
+import com.patitosoft.encora.patitosoftapp.domain.Position;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,7 +41,17 @@ public class EmployeePositionResource {
             this.currentPosition = entity.getCurrentPosition();
         }
 
-        public EmployeePositionResource build(){
+        public EmployeePositionResourceBuilder employee(Employee employee) {
+            this.employee = new EmployeeResource.EmployeeResourceBuilder(employee).build();
+            return this;
+        }
+
+        public EmployeePositionResourceBuilder position(Position position) {
+            this.position = new PositionResource.PositionResourceBuilder(position).build();
+            return this;
+        }
+
+        public EmployeePositionResource build() {
             return new EmployeePositionResource(this);
         }
     }
