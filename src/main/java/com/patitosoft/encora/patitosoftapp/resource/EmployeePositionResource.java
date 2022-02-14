@@ -15,7 +15,7 @@ import lombok.Setter;
 public class EmployeePositionResource {
 
     private String id;
-    private String salary;
+    private Integer salary;
     private Boolean currentPosition;
     private EmployeeResource employee;
     private PositionResource position;
@@ -30,7 +30,7 @@ public class EmployeePositionResource {
 
     public static class EmployeePositionResourceBuilder {
         private final String id;
-        private final String salary;
+        private final Integer salary;
         private final Boolean currentPosition;
         private EmployeeResource employee;
         private PositionResource position;

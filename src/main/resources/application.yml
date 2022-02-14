@@ -1,4 +1,10 @@
+server:
+  servlet:
+    context-path: /api
 spring:
+  data:
+    rest:
+      basepath: /admin
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

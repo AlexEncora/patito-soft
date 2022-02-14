@@ -1,16 +1,16 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
 import com.patitosoft.encora.patitosoftapp.resource.PositionResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.rest.core.annotation.RestResource;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Position {
+public class Position implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -26,7 +26,9 @@ public class Position {
     private String id;
     private String name;
 
-    @OneToMany(mappedBy = "position")
+    @OneToMany(mappedBy = "position", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @RestResource(exported = false)
+    @JsonManagedReference(value = "position-employee")
     private List<EmployeePosition> employeePositions;
 
     public Position(PositionBuilder builder) {
@@ -45,7 +47,7 @@ public class Position {
             this.name = resource.getName();
         }
 
-        public PositionBuilder employeePositions(List<EmployeePositionResource> employeePositionResources){
+        public PositionBuilder employeePositions(List<EmployeePositionResource> employeePositionResources) {
             this.employeePositions = employeePositionResources.stream().map(
                     employeePositionResource -> new EmployeePosition.EmployeePositionBuilder(employeePositionResource)
                             .build()).collect(Collectors.toList());
