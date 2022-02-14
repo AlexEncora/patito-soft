@@ -1,18 +1,29 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
 import com.patitosoft.encora.patitosoftapp.resource.EmployeeResource;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Setter
@@ -22,7 +33,7 @@ import java.util.stream.Collectors;
 @Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"corporateEmail"})
 })
-public class Employee {
+public class Employee implements Serializable {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -33,7 +44,7 @@ public class Employee {
     @NotEmpty(message = "The lastname cannot be null")
     private String lastName;
     @Enumerated
-    @NotEmpty(message = "The gender cannot be null")
+    @NotNull
     private Gender gender;
     @Email(message = "Email is not valid", regexp = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
     @NotEmpty(message = "Email cannot be empty")
@@ -44,7 +55,7 @@ public class Employee {
     private String country;
     @NotEmpty(message = "State is mandatory")
     private String state;
-    @NotEmpty(message = "Zipcode is mandatory")
+    @NotNull
     private Integer zipCode;
     @NotEmpty(message = "Local address is mandatory")
     private String streetAddress;
@@ -52,12 +63,22 @@ public class Employee {
     private LocalDate birthday;
     private Boolean isExEmployee;
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @RestResource(exported = false)
+    @JsonManagedReference(value = "employee-position")
     private List<EmployeePosition> employeePositions;
 
     @PrePersist
     public void prePersist() {
         this.isExEmployee = false;
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Employee>> violations = validator.validate(this);
+        StringBuilder builder = new StringBuilder();
+        violations.forEach(employeeConstraintViolation -> builder.append(employeeConstraintViolation.getMessage()));
+        if (!violations.isEmpty()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, builder.toString());
+        }
     }
 
     public Employee(EmployeeBuilder builder) {
