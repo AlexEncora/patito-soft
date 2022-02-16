@@ -1,5 +1,6 @@
 package com.patitosoft.encora.patitosoftapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.patitosoft.encora.patitosoftapp.resource.EmployeePositionResource;
@@ -51,10 +52,6 @@ public class Employee implements Serializable {
     private String corporateEmail;
     private String personalEmail;
     private String phone;
-    @NotEmpty(message = "Country is mandatory")
-    private String country;
-    @NotEmpty(message = "State is mandatory")
-    private String state;
     @NotNull
     private Integer zipCode;
     @NotEmpty(message = "Local address is mandatory")
@@ -67,6 +64,11 @@ public class Employee implements Serializable {
     @RestResource(exported = false)
     @JsonManagedReference(value = "employee-position")
     private List<EmployeePosition> employeePositions;
+
+    @ManyToOne
+    @RestResource(exported = false)
+    @JsonBackReference(value = "employee-state")
+    private State state;
 
     @PrePersist
     public void prePersist() {
@@ -89,12 +91,12 @@ public class Employee implements Serializable {
         this.corporateEmail = builder.corporateEmail;
         this.personalEmail = builder.personalEmail;
         this.phone = builder.phone;
-        this.country = builder.country;
         this.state = builder.state;
         this.zipCode = builder.zipCode;
         this.streetAddress = builder.streetAddress;
         this.birthday = builder.birthday;
         this.employeePositions = builder.employeePositions;
+        this.isExEmployee = builder.isExEmployee;
     }
 
     public static class EmployeeBuilder {
@@ -105,11 +107,11 @@ public class Employee implements Serializable {
         private final String corporateEmail;
         private final String personalEmail;
         private final String phone;
-        private final String country;
-        private final String state;
+        private State state;
         private final Integer zipCode;
         private final String streetAddress;
         private final LocalDate birthday;
+        private final Boolean isExEmployee;
         private List<EmployeePosition> employeePositions;
 
         public EmployeeBuilder(EmployeeResource resource) {
@@ -120,11 +122,10 @@ public class Employee implements Serializable {
             this.corporateEmail = resource.getCorporateEmail();
             this.personalEmail = resource.getPersonalEmail();
             this.phone = resource.getPhone();
-            this.country = resource.getCountry();
-            this.state = resource.getState();
             this.zipCode = resource.getZipCode();
             this.streetAddress = resource.getStreetAddress();
             this.birthday = resource.getBirthday();
+            this.isExEmployee = resource.getIsExEmployee();
         }
 
         public EmployeeBuilder employeePositions(List<EmployeePositionResource> employeePositionResources) {

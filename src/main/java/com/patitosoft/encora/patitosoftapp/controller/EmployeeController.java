@@ -33,4 +33,29 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployee(employeeId));
     }
 
+    @GetMapping("/employee/search-by-names-position")
+    private ResponseEntity getEmployeeByNamesPosition(@RequestParam(value = "firstname") String firstName,
+                                                      @RequestParam(value = "lastname") String lastName,
+                                                      @RequestParam(value = "position_id") String positionId) {
+        return ResponseEntity.ok(employeeService.getEmployeeByNamesPosition(firstName, lastName, positionId));
+    }
+
+    @GetMapping("admin/employee/search-by-names-position")
+    private ResponseEntity getEmployeeByNamesPosition(@RequestParam(value = "firstname") String firstName,
+                                                      @RequestParam(value = "lastname") String lastName,
+                                                      @RequestParam(value = "position_id") String positionId,
+                                                      @RequestParam(value = "ex_employee") Boolean exEmployee) {
+        return ResponseEntity.ok(employeeService.getEmployeeByNamesPosition(firstName, lastName, positionId, exEmployee));
+    }
+
+    @GetMapping("/employee/birthday")
+    private ResponseEntity getEmployeesByBirthday() {
+        return ResponseEntity.ok(employeeService.getEmployeesByBirthday());
+    }
+
+    @PutMapping("/employee/{employee_id}")
+    private ResponseEntity updateToExEmployee(@PathVariable(value = "employee_id") String employeeId) {
+        return ResponseEntity.ok(employeeService.updateToExEmployee(employeeId));
+    }
+
 }
