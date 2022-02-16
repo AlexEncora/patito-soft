@@ -25,8 +25,7 @@ public class EmployeeResource {
     private String corporateEmail;
     private String personalEmail;
     private String phone;
-    private String country;
-    private String state;
+    private StateResource state;
     private Integer zipCode;
     private String streetAddress;
     private LocalDate birthday;
@@ -41,12 +40,12 @@ public class EmployeeResource {
         this.corporateEmail = builder.corporateEmail;
         this.personalEmail = builder.personalEmail;
         this.phone = builder.phone;
-        this.country = builder.country;
         this.state = builder.state;
         this.zipCode = builder.zipCode;
         this.streetAddress = builder.streetAddress;
         this.birthday = builder.birthday;
         this.employeePositions = builder.employeePositions;
+        this.isExEmployee = builder.isExEmployee;
     }
 
     public static class EmployeeResourceBuilder {
@@ -57,11 +56,11 @@ public class EmployeeResource {
         private final String corporateEmail;
         private final String personalEmail;
         private final String phone;
-        private final String country;
-        private final String state;
+        private StateResource state;
         private final Integer zipCode;
         private final String streetAddress;
         private final LocalDate birthday;
+        private final Boolean isExEmployee;
         private List<EmployeePositionResource> employeePositions;
 
         public EmployeeResourceBuilder(Employee entity) {
@@ -72,11 +71,10 @@ public class EmployeeResource {
             this.corporateEmail = entity.getCorporateEmail();
             this.personalEmail = entity.getPersonalEmail();
             this.phone = entity.getPhone();
-            this.country = entity.getCountry();
-            this.state = entity.getState();
             this.zipCode = entity.getZipCode();
             this.streetAddress = entity.getStreetAddress();
             this.birthday = entity.getBirthday();
+            this.isExEmployee = entity.getIsExEmployee();
         }
 
         public EmployeeResourceBuilder employeePositions(List<EmployeePosition> employeePosition) {

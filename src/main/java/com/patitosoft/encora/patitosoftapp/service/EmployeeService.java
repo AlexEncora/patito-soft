@@ -1,5 +1,7 @@
 package com.patitosoft.encora.patitosoftapp.service;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.patitosoft.encora.patitosoftapp.domain.Employee;
 import com.patitosoft.encora.patitosoftapp.domain.EmployeePosition;
 import com.patitosoft.encora.patitosoftapp.domain.Gender;
@@ -15,7 +17,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +81,72 @@ public class EmployeeService {
                         HttpStatus.NOT_FOUND, "Employee not found ".concat(employeeId)
                 ));
         return new EmployeeResource.EmployeeResourceBuilder(employee).build();
+    }
+
+    public List<EmployeeResource> getEmployeeByNamesPosition(String firstName, String lastName, String positionId) {
+
+        List<Employee> employees = employeeRepository.findByFirstNameContainsIgnoreCaseAndIsExEmployee(firstName
+                , false);
+        employees.addAll(employeeRepository.findByLastNameContainsIgnoreCaseAndIsExEmployee(lastName, false));
+        employees.addAll(employeePositionRepository.findAllByPosition_IdAndCurrentPosition(positionId, true)
+                .stream().map(EmployeePosition::getEmployee).collect(Collectors.toList()));
+        employees.removeAll(Collections.singleton(null));
+        employees = employees.stream().filter(employee -> employee.getIsExEmployee().equals(false))
+                .collect(Collectors.toList());
+        employees = Lists.newArrayList(Sets.newLinkedHashSet(employees));
+
+        return employees.stream()
+                .map(employee -> new EmployeeResource.EmployeeResourceBuilder(employee).build())
+                .collect(Collectors.toList());
+    }
+
+    public List<EmployeeResource> getEmployeeByNamesPosition(String firstName, String lastName, String positionId
+            , Boolean exEmployee) {
+
+        List<Employee> employees;
+        if (exEmployee) {
+            employees = employeeRepository.findByFirstNameStartingWith(firstName);
+            employees.addAll(employeeRepository.findByLastNameStartingWith(lastName));
+            employees.addAll(employeePositionRepository.findAllByPosition_IdAndCurrentPosition(positionId, true)
+                    .stream().map(EmployeePosition::getEmployee).collect(Collectors.toList()));
+            employees.removeAll(Collections.singleton(null));
+        } else {
+            employees = employeeRepository.findByFirstNameContainsIgnoreCaseAndIsExEmployee(firstName, false);
+            employees.addAll(employeeRepository.findByLastNameContainsIgnoreCaseAndIsExEmployee(lastName, false));
+            employees.addAll(employeePositionRepository.findAllByPosition_IdAndCurrentPosition(positionId, true)
+                    .stream().map(EmployeePosition::getEmployee).collect(Collectors.toList()));
+            employees.removeAll(Collections.singleton(null));
+            employees = employees.stream().filter(employee -> employee.getIsExEmployee().equals(false))
+                    .collect(Collectors.toList());
+        }
+        employees = Lists.newArrayList(Sets.newLinkedHashSet(employees));
+
+        return employees.stream()
+                .map(employee -> new EmployeeResource.EmployeeResourceBuilder(employee).build())
+                .collect(Collectors.toList());
+    }
+
+    public DTOBirthday getEmployeesByBirthday() {
+
+        DTOBirthday dtoBirthday = new DTOBirthday();
+
+        dtoBirthday.setTodayBirthday(employeeRepository.findByBirthday(LocalDate.now()).stream()
+                .map(employee -> new EmployeeResource.EmployeeResourceBuilder(employee).build())
+                .collect(Collectors.toList()));
+        dtoBirthday.setNextWeekBirthday(employeeRepository.findByBirthdayBetween(LocalDate.now()
+                        , LocalDate.now().plusWeeks(1)).stream()
+                .map(employee -> new EmployeeResource.EmployeeResourceBuilder(employee).build())
+                .collect(Collectors.toList()));
+        return dtoBirthday;
+    }
+
+    @Transactional
+    public EmployeeResource updateToExEmployee(String employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Employee not found ".concat(employeeId)
+                ));
+        employee.setIsExEmployee(true);
+        return new EmployeeResource.EmployeeResourceBuilder(employeeRepository.save(employee)).build();
     }
 }

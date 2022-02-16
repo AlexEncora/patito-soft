@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RepositoryRestResource(path = "employee-position")
 public interface EmployeePositionRepository extends JpaRepository<EmployeePosition, String> {
@@ -29,4 +31,7 @@ public interface EmployeePositionRepository extends JpaRepository<EmployeePositi
     @Query("SELECT COUNT(salary) FROM EmployeePosition ep WHERE ep.salary > :minSalary AND ep.salary < :maxSalary " +
             "AND ep.currentPosition = true")
     Integer countEmployeesRange(@Param("minSalary") Integer minSalary, @Param("maxSalary") Integer maxSalary);
+
+    List<EmployeePosition> findAllByPosition_IdAndCurrentPosition(String positionId, Boolean currentPosition);
+
 }
